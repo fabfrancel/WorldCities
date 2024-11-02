@@ -1,0 +1,36 @@
+// Variable overrides first
+$primary: #900;
+$enable-shadows: true;
+$prefix: "mo-";
+
+// Then import Bootstrap
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+
+
+@include color-mode(dark) {
+  svg {
+    fill: rgb(196, 196, 196);
+  }
+
+  table tr:first-child, mat-paginator, thead, th {
+    background-color: var(--bs-dark);
+    color: var(--bs-light)
+  }
+}
+
+@include color-mode(ligth) {
+  svg {
+    fill: rgb(0, 0, 0, 0.95);
+  }
+}
+
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

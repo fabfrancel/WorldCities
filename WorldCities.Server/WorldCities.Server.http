@@ -1,0 +1,10 @@
+# O arquivo NomeDoProjeto.Server.http é frequentemente utilizado para facilitar a realização de requisições HTTP 
+# diretamente do Visual Studio. Ele permite que desenvolvedores criem, enviem e testem requisições HTTP de maneira 
+# simplificada, sem a necessidade de recorrer a ferramentas externas.
+@WorldCities.Server_HostAddress = http://localhost:5213
+
+GET {{WorldCities.Server_HostAddress}}/api/
+Accept: application/json
+
+###
+
