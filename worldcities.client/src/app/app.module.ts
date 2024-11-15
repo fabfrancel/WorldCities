@@ -7,10 +7,9 @@ import { HomeComponent } from './home/home.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { FooterComponent } from './footer/footer.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
 import { CitiesComponent } from './cities/cities.component';
+import { AngularMaterialModule } from './angular-material-module';
+import { CountriesComponent } from './countries/countries.component';
 
 @NgModule({
   declarations: [
@@ -18,14 +17,14 @@ import { CitiesComponent } from './cities/cities.component';
     HomeComponent,
     NavMenuComponent,
     FooterComponent,
-    CitiesComponent
+    CitiesComponent,
+    CountriesComponent
   ],
   imports: [
-    BrowserModule, HttpClientModule,
+    BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule
+    AngularMaterialModule,
   ],
   providers: [
     provideAnimationsAsync()

@@ -5,26 +5,26 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { environment } from '../../environments/environment';
 
-interface City {
+interface Country {
   id: number;
   name: string;
-  lat: number;
-  lon: number;
+  iso2: string;
+  iso3: string;
 }
 
 @Component({
-  selector: 'app-cities',
-  templateUrl: './cities.component.html',
-  styleUrl: './cities.component.scss'
+  selector: 'app-countries',
+  templateUrl: './countries.component.html',
+  styleUrl: './countries.component.scss'
 })
-export class CitiesComponent implements OnInit {
+export class CountriesComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  public cities!: MatTableDataSource<City>;
+  public countries!: MatTableDataSource<Country>;
 
-  displayedColumns = ['id', 'name', 'lat', 'lon'];
+  displayedColumns = ['id', 'name', 'iso2', 'iso3'];
 
   defaultPageIndex: number = 0;
   defaultPageSize: number = 10;
@@ -49,7 +49,7 @@ export class CitiesComponent implements OnInit {
 
   getData(event: PageEvent) {
 
-    var url = environment.baseUrl + 'Cities';
+    var url = environment.baseUrl + 'Countries';
 
     var params = new HttpParams()
       .set("pageIndex", event.pageIndex.toString())
@@ -68,19 +68,10 @@ export class CitiesComponent implements OnInit {
         this.paginator.length = result.totalCount;
         this.paginator.pageIndex = result.pageIndex;
         this.paginator.pageSize = result.pageSize;
-        this.cities = new MatTableDataSource<City>(result.data);
+        this.countries = new MatTableDataSource<Country>(result.data);
       },
       error: (error) => console.error(error)
     });
   }
 
 }
-
-
-/*
- *  @ViewChild
- *  é um decorador no Angular que permite acessar um componente filho,
- *  diretiva ou elemento DOM dentro de um componente pai.
- *  Ele é usado para obter uma referência a um elemento específico no template do componente pai,
- *  permitindo interagir com ele diretamente no código TypeScript.
- */
