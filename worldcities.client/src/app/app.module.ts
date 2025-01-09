@@ -10,6 +10,10 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { CitiesComponent } from './cities/cities.component';
 import { AngularMaterialModule } from './angular-material-module';
 import { CountriesComponent } from './countries/countries.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CityEditComponent } from './cities/city-edit.component';
+import { NavbarComponent } from './navbar/navbar.component';
+
 
 @NgModule({
   declarations: [
@@ -18,13 +22,16 @@ import { CountriesComponent } from './countries/countries.component';
     NavMenuComponent,
     FooterComponent,
     CitiesComponent,
-    CountriesComponent
+    CountriesComponent,
+    CityEditComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
     AngularMaterialModule,
+    ReactiveFormsModule
   ],
   providers: [
     provideAnimationsAsync()

@@ -1,0 +1,28 @@
+<div class="city-edit">
+  <h1>{{title}}</h1>
+  <p *ngIf="id && !city"><em>Loading...</em></p>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>Name: </mat-label>
+      <input matInput formControlName="name" placeholder="Type a name" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Latitude: </mat-label>
+      <input matInput formControlName="lat" placeholder="Insert latitude" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Longitude: </mat-label>
+      <input matInput formControlName="lon" placeholder="Insert longitude" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Country</mat-label>
+      <mat-select formControlName="countryId" select [(value)]="selectedCountryId" placeholder="Select a country..." required>
+        <mat-option *ngFor="let country of countries" [value]="country.id">{{country.name}}</mat-option>"
+      </mat-select>
+    </mat-form-field>
+    <div>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">{{ this.id ? "Save" : "Create" }}</button>
+      <button mat-raised-button color="secondary" (click)="goBack()">Cancel</button>
+    </div>
+  </form>
+</div>

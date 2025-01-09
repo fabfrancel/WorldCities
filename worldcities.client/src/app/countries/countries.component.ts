@@ -4,13 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { environment } from '../../environments/environment';
-
-interface Country {
-  id: number;
-  name: string;
-  iso2: string;
-  iso3: string;
-}
+import { Country } from './country';
 
 @Component({
   selector: 'app-countries',

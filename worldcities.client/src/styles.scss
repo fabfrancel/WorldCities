@@ -1,5 +1,5 @@
 // Variable overrides first
-$primary: #900;
+/*$primary: #900;
 $enable-shadows: true;
 $prefix: "mo-";
 
@@ -24,7 +24,7 @@ $prefix: "mo-";
     fill: rgb(0, 0, 0, 0.95);
   }
 }
-
+*/
 
 html, body {
   height: 100%;
@@ -33,4 +33,11 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+  text-align: center;
 }

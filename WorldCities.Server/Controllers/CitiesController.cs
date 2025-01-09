@@ -21,10 +21,16 @@ public class CitiesController(ApplicationDbContext context) : ControllerBase
             string? filterColumn = null,
             string? filterQuery = null)
     {
-        return await ApiResult<City>.CreateAsync(_context.Cities.AsNoTracking(),
+        var cities = await ApiResult<City>.CreateAsync(_context.Cities.AsNoTracking(),
                 pageIndex, pageSize,
                 sortColumn, sortOrder,
                 filterColumn, filterQuery);
+
+        foreach (var city in cities.Data) { 
+            city.Country = await _context.Countries.FindAsync(city.CountryId);
+        }
+
+        return cities;
     }
 
     // GET: api/Cities/5

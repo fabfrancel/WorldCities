@@ -4,13 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { environment } from '../../environments/environment';
+import { City } from './city';
 
-interface City {
-  id: number;
-  name: string;
-  lat: number;
-  lon: number;
-}
 
 @Component({
   selector: 'app-cities',
@@ -24,7 +19,7 @@ export class CitiesComponent implements OnInit {
 
   public cities!: MatTableDataSource<City>;
 
-  displayedColumns = ['id', 'name', 'lat', 'lon'];
+  displayedColumns = ['id', 'name', 'lat', 'lon', 'country'];
 
   defaultPageIndex: number = 0;
   defaultPageSize: number = 10;
@@ -74,7 +69,7 @@ export class CitiesComponent implements OnInit {
     });
   }
 
-}
+ }
 
 
 /*

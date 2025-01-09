@@ -10,8 +10,14 @@ using System.Reflection;
 
 namespace WorldCities.Server.Extensions;
 
+/// <summary>
+/// Provides extension methods for IQueryable.
+/// </summary>
 public static class IQueryableExtensions
 {
+    /// <summary>
+    /// Specifies the filter methods available for string properties.
+    /// </summary>
     public enum FilterMethods
     {
         StartsWith,
@@ -19,10 +25,21 @@ public static class IQueryableExtensions
         EndsWith
     }
 
-
-    // source.OrderBy("name", "ASC")
-    // original OrderBy method signature: public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, Expression<Func<T, object>> keySelector)
-    // original OrderBy method example: cities = cities.OrderBy(c => c.Name);
+    /// <summary>
+    /// Orders the elements of a sequence according to a specified property and direction.
+    /// </summary>
+    /// <example>
+    /// source.OrderBy("name", "ASC")
+    /// </example>
+    /// <remarks>
+    /// original OrderBy method signature: public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, Expression<Func<T, object>> keySelector)
+    /// original OrderBy method example: cities = cities.OrderBy(c => c.Name);
+    /// </remarks>  
+    /// <typeparam name="T">The type of the elements of source.</typeparam>
+    /// <param name="source">An IQueryable&lt;T&gt; to order.</param>
+    /// <param name="orderByProperty">The name of the property to order by.</param>
+    /// <param name="direction">The direction to order by ("ASC" or "DESC").</param>
+    /// <returns>An IQueryable<T> whose elements are sorted according to the specified property and direction.</returns>
     public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string orderByProperty, string direction)
     {
         var type = typeof(T);
@@ -44,9 +61,22 @@ public static class IQueryableExtensions
         return source.Provider.CreateQuery<T>(resultExpression);
     }
 
-    // source.Where("name", "John")
-    // original Where method signature: public static IQueryable<T> Where<T>(this IQueryable<T> source, Expression<Func<T, bool>> predicate)
-    // original Where method example: cities = cities.Where(c => c.Name.StartsWith("San"));
+    /// <summary>
+    /// Filters the elements of a sequence based on a specified property and query.
+    /// </summary>
+    /// <example>
+    /// source.Where("name", "John")
+    /// </example>
+    /// <remarks>
+    /// original Where method signature: public static IQueryable<T> Where<T>(this IQueryable<T> source, Expression<Func<T, bool>> predicate)
+    /// original Where method example: cities = cities.Where(c => c.Name.StartsWith("San"));
+    /// </remarks>
+    /// <typeparam name="T">The type of the elements of source.</typeparam>
+    /// <param name="source">An IQueryable&lt;T&gt; to filter.</param>
+    /// <param name="filterColumn">The name of the property to filter by.</param>
+    /// <param name="filterQuery">The query to filter by.</param>
+    /// <param name="filterMethodName">The filter method to use (StartsWith, Contains, EndsWith).</param>
+    /// <returns>An IQueryable<T> that contains elements from the input sequence that satisfy the condition specified by filterColumn and filterQuery.</returns>
     public static IQueryable<T> Where<T>(this IQueryable<T> source, string filterColumn, string filterQuery, FilterMethods filterMethodName = FilterMethods.StartsWith)
     {
         var type = typeof(T);
