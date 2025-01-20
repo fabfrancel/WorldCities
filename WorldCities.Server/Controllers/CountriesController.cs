@@ -33,11 +33,8 @@ public class CountriesController(ApplicationDbContext context) : ControllerBase
     {
         var country = await _context.Countries.FindAsync(id);
 
-        if (country == null)
-        {
-            return NotFound();
-        }
-
+        if (country is null) return NotFound();
+        
         return country;
     }
 
@@ -46,10 +43,7 @@ public class CountriesController(ApplicationDbContext context) : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutCountry(int id, Country country)
     {
-        if (id != country.Id)
-        {
-            return BadRequest();
-        }
+        if (id != country.Id) return BadRequest();
 
         _context.Entry(country).State = EntityState.Modified;
 

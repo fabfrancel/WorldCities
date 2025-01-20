@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators, AbstractControl, AsyncValidatorFn } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { City } from './city';
 import { Country } from '../countries/country';
 
 @Component({
-  selector: 'app-city-edit',
-  templateUrl: './city-edit.component.html',
-  styleUrl: './city-edit.component.scss'
+    selector: 'app-city-edit',
+    templateUrl: './city-edit.component.html',
+    styleUrl: './city-edit.component.scss',
+    standalone: false
 })
 export class CityEditComponent implements OnInit {
   // the view title
@@ -26,21 +29,23 @@ export class CityEditComponent implements OnInit {
   // and not NULL when we're editing an existing one.
   id?: number;
 
+
   // the countries array for the select
   countries?: Country[];
   selectedCountryId: number = 0;
 
-  baseUrl: string =  `${environment.baseUrl}Cities/`;
+  baseUrl: string = `${environment.baseUrl}Cities/`;
 
   constructor(private activatedRoute: ActivatedRoute, private router: Router, private http: HttpClient) { }
 
   ngOnInit() {
     this.form = new FormGroup({
-      name: new FormControl(),
-      lat: new FormControl(),
-      lon: new FormControl(),
-      countryId: new FormControl()
-    });
+      name: new FormControl('', [Validators.required, Validators.minLength(4)]),
+      lat: new FormControl('', [Validators.required, Validators.min(-90), Validators.max(90)]),
+      lon: new FormControl('', [Validators.required, Validators.min(-180), Validators.max(180)]),
+      countryId: new FormControl('', Validators.required)
+    }, null, this.isDupeCity());
+
     this.loadData();
   }
 
@@ -66,7 +71,7 @@ export class CityEditComponent implements OnInit {
           this.title = `Edit - ${this.city.name}`;
           this.selectedCountryId = this.city.countryId;
           // update the form with the city value
-          this.form.patchValue(this.city); 
+          this.form.patchValue(this.city);
         },
         error: (error) => console.error(error)
       });
@@ -76,7 +81,7 @@ export class CityEditComponent implements OnInit {
     }
   }
 
-  loadCountries() {
+loadCountries() {
     var url = `${environment.baseUrl}Countries`;
 
     var params = new HttpParams()
@@ -90,7 +95,7 @@ export class CityEditComponent implements OnInit {
       },
       error: (error) => console.error(error)
     });
-  } 
+  }
 
 
   onSubmit() {
@@ -115,7 +120,7 @@ export class CityEditComponent implements OnInit {
     else {
       // create a new city with the form value
       city = <City>this.form.value;
-     
+
       this.http.post<City>(this.baseUrl, city).subscribe({
         next: (result) => {
           console.log(`City ${result.id} has been created`);
@@ -126,24 +131,36 @@ export class CityEditComponent implements OnInit {
     }
   }
 
- 
 
   // go back to city view
   goBack() {
     this.router.navigate(['/cities']);
   }
+
+  //  Return an AsyncValidatorFn than, in turn, returns an Observable: this means that is not returning a value,
+  //  but a subscriber function instance tha will eventually return a value - which will be either a key / value object or null.
+  //  This value will only be emitted when the observable is executed.
+  //  The inner funcion create a temporary city object, fill it with the real-time form data,
+  //  calls a IsDupeCity back-end URL and eventually returns either true or null, depending on the result.
+  isDupeCity(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<{ [key: string]: any } | null> =>
+    {
+      var city = <City>{};
+
+      city.id = (this.id) ? this.id : 0;
+      city.name = this.form.controls['name'].value;
+      city.lat = +this.form.controls['lat'].value;
+      city.lon = +this.form.controls['lon'].value;
+      city.countryId = +this.form.controls['contryId'].value;
+
+      var url = environment.baseUrl + 'api/cities/IsDupeCity';
+
+      // Instead subscribing to the HttpClient, we're manipulating it using the pipe and map RxJs operators
+      return this.http.post<boolean>(url, city).pipe(map(result => {
+
+        return (result ? { isDupeCity: true } : null)
+      }));
+    }
+  }
 }
 
-/*
-  Função do !
-  Evita Erros: O operador ! diz ao compilador do TypeScript para não considerar
-  city como null ou undefined no momento da execução.
-
-  Assunção de Segurança: O desenvolvedor está assumindo a responsabilidade de garantir que city realmente tem um valor e,
-  portanto, city.id não causará um erro de referência nulo.
-
-  Contexto de Uso
-  Esse operador é útil em situações onde você tem certeza que uma variável não é null ou undefined,
-  mas o TypeScript não consegue garantir isso por conta própria. No entanto, é importante usá-lo com cuidado,
-  pois usá-lo indevidamente pode mascarar problemas no código.
-*/ 

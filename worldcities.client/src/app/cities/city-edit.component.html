@@ -2,24 +2,52 @@
   <h1>{{title}}</h1>
   <p *ngIf="id && !city"><em>Loading...</em></p>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
     <mat-form-field>
       <mat-label>Name: </mat-label>
-      <input matInput formControlName="name" placeholder="Type a name" required>
+      <input matInput type="text" formControlName="name" placeholder="Type a name">
+      <mat-error>
+        <span *ngIf="form.controls['name'].errors?.['minlength']">
+          The name must have at least 4 characters.
+        </span>
+        <span *ngIf="form.controls['name'].errors?.['required']">
+          Name is required
+        </span>
+      </mat-error>
     </mat-form-field>
+
     <mat-form-field>
       <mat-label>Latitude: </mat-label>
-      <input matInput formControlName="lat" placeholder="Insert latitude" required>
+      <input matInput type="number" formControlName="lat" placeholder="Insert latitude" required>
+      <mat-error>
+        <span *ngIf="form.controls['lat'].errors?.['required']">Latitude is required</span>
+        <span *ngIf="form.controls['lat'].errors?.['min'] || form.controls['lat'].errors?.['max']">
+            Latitude must be a value between -90.0 and 90.0
+        </span>
+      </mat-error>
     </mat-form-field>
+
     <mat-form-field>
       <mat-label>Longitude: </mat-label>
-      <input matInput formControlName="lon" placeholder="Insert longitude" required>
+      <input matInput type="number" formControlName="lon" placeholder="Insert longitude" required>
+      <mat-error>
+        <span *ngIf="form.controls['lon'].errors?.['required']">Longitude is required</span>
+        <span *ngIf="form.controls['lon'].errors?.['min'] || form.controls['lon'].errors?.['max']">
+          Latitude must be a value between -180.0 and 180.0
+        </span>
+      </mat-error>
     </mat-form-field>
+
     <mat-form-field>
       <mat-label>Country</mat-label>
       <mat-select formControlName="countryId" select [(value)]="selectedCountryId" placeholder="Select a country..." required>
         <mat-option *ngFor="let country of countries" [value]="country.id">{{country.name}}</mat-option>"
       </mat-select>
+      <mat-error *ngIf="form.controls['countryId'].errors?.['required']">
+         Country is required
+      </mat-error>
     </mat-form-field>
+
     <div>
       <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">{{ this.id ? "Save" : "Create" }}</button>
       <button mat-raised-button color="secondary" (click)="goBack()">Cancel</button>

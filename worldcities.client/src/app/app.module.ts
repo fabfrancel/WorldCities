@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
@@ -15,27 +15,21 @@ import { CityEditComponent } from './cities/city-edit.component';
 import { NavbarComponent } from './navbar/navbar.component';
 
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    NavMenuComponent,
-    FooterComponent,
-    CitiesComponent,
-    CountriesComponent,
-    CityEditComponent,
-    NavbarComponent
-  ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    AppRoutingModule,
-    AngularMaterialModule,
-    ReactiveFormsModule
-  ],
-  providers: [
-    provideAnimationsAsync()
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        HomeComponent,
+        NavMenuComponent,
+        FooterComponent,
+        CitiesComponent,
+        CountriesComponent,
+        CityEditComponent,
+        NavbarComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        AngularMaterialModule,
+        ReactiveFormsModule], providers: [
+        provideAnimationsAsync(),
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }

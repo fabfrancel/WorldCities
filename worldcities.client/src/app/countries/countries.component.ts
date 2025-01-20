@@ -7,9 +7,10 @@ import { environment } from '../../environments/environment';
 import { Country } from './country';
 
 @Component({
-  selector: 'app-countries',
-  templateUrl: './countries.component.html',
-  styleUrl: './countries.component.scss'
+    selector: 'app-countries',
+    templateUrl: './countries.component.html',
+    styleUrl: './countries.component.scss',
+    standalone: false
 })
 export class CountriesComponent implements OnInit {
 
@@ -17,6 +18,7 @@ export class CountriesComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   public countries!: MatTableDataSource<Country>;
+  public testCountries!: Country[];
 
   displayedColumns = ['id', 'name', 'iso2', 'iso3'];
 

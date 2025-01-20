@@ -1,23 +1,29 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { MatTableDataSource } from '@angular/material/table';
+import { HttpClient } from '@angular/common/http';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { environment } from '../../environments/environment';
-import { City } from './city';
+import { CityDataSource } from './city-data-source';
 
 
 @Component({
   selector: 'app-cities',
   templateUrl: './cities.component.html',
-  styleUrl: './cities.component.scss'
+  styleUrl: './cities.component.scss',
+  standalone: false
 })
 export class CitiesComponent implements OnInit {
 
+  /*
+ *  @ViewChild
+ *  é um decorador no Angular que permite acessar um componente filho,
+ *  diretiva ou elemento DOM dentro de um componente pai.
+ *  Ele é usado para obter uma referência a um elemento específico no template do componente pai,
+ *  permitindo interagir com ele diretamente no código TypeScript.
+ */
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  public cities!: MatTableDataSource<City>;
+  public dataSource!: CityDataSource;
 
   displayedColumns = ['id', 'name', 'lat', 'lon', 'country'];
 
@@ -30,7 +36,8 @@ export class CitiesComponent implements OnInit {
 
   constructor(private http: HttpClient) { }
 
-  ngOnInit(){
+  ngOnInit() {
+    this.dataSource = new CityDataSource(this.http)
     this.loadData();
   }
 
@@ -43,39 +50,29 @@ export class CitiesComponent implements OnInit {
   }
 
   getData(event: PageEvent) {
+    this.dataSource.loadCities(
+      event.pageIndex,
+      event.pageSize,
+      this.sort ? this.sort.active : this.defaultFilterColumn,
+      this.sort ? this.sort.direction : this.defaultSortOrder,
+      this.filterQuery ? this.defaultFilterColumn : undefined,
+      this.filterQuery
+    );
 
-    var url = environment.baseUrl + 'Cities';
-
-    var params = new HttpParams()
-      .set("pageIndex", event.pageIndex.toString())
-      .set("pageSize", event.pageSize.toString())
-      .set("sortColumn", this.sort ? this.sort.active : this.defaultSortColumn)
-      .set("sortOrder", this.sort ? this.sort.direction : this.defaultSortOrder);
-
-    if (this.filterQuery) {
-      params = params
-        .set("filterColumn", this.defaultFilterColumn)
-        .set("filterQuery", this.filterQuery);
-    }
-
-    this.http.get<any>(url, { params }).subscribe({
-      next: (result) => {
-        this.paginator.length = result.totalCount;
-        this.paginator.pageIndex = result.pageIndex;
-        this.paginator.pageSize = result.pageSize;
-        this.cities = new MatTableDataSource<City>(result.data);
-      },
-      error: (error) => console.error(error)
+    this.dataSource.totalItems$.subscribe(totalItems => {
+      this.paginator.length = totalItems;
     });
+
+    this.dataSource.pageIndex$.subscribe(pageIndex => {
+      this.paginator.pageIndex = pageIndex;
+    });
+
+    this.dataSource.pageSize$.subscribe(pageSize => {
+      this.paginator.pageSize = pageSize;
+    });
+
   }
 
- }
+}
 
 
-/*
- *  @ViewChild
- *  é um decorador no Angular que permite acessar um componente filho,
- *  diretiva ou elemento DOM dentro de um componente pai.
- *  Ele é usado para obter uma referência a um elemento específico no template do componente pai,
- *  permitindo interagir com ele diretamente no código TypeScript.
- */

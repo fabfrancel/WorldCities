@@ -13,7 +13,7 @@ public class CitiesController(ApplicationDbContext context) : ControllerBase
 
     // GET: api/Cities
     [HttpGet]
-    public async Task<ActionResult<ApiResult<City>>> GetCities(
+    public async Task<ActionResult<ApiResult<CityViewModel>>> GetCities(
             int pageIndex = 0,
             int pageSize = 10,
             string? sortColumn = null,
@@ -21,7 +21,15 @@ public class CitiesController(ApplicationDbContext context) : ControllerBase
             string? filterColumn = null,
             string? filterQuery = null)
     {
-        var cities = await ApiResult<City>.CreateAsync(_context.Cities.AsNoTracking(),
+        var viewContext = _context.Cities.Select(c => new CityViewModel { 
+            Id = c.Id,
+            Name = c.Name,
+            Lat = c.Location!.X,
+            Lon = c.Location!.Y,
+            CountryId = c.CountryId
+        });
+
+        var cities = await ApiResult<CityViewModel>.CreateAsync(viewContext.AsNoTracking(),
                 pageIndex, pageSize,
                 sortColumn, sortOrder,
                 filterColumn, filterQuery);
@@ -35,16 +43,25 @@ public class CitiesController(ApplicationDbContext context) : ControllerBase
 
     // GET: api/Cities/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<City>> GetCity(int id)
+    public async Task<ActionResult<CityViewModel>> GetCity(int id)
     {
+    
         var city = await _context.Cities.FindAsync(id);
+
 
         if (city == null)
         {
             return NotFound();
         }
 
-        return city;
+        return new CityViewModel
+        {
+            Id = city.Id,
+            Name = city.Name,
+            Lat = city.Location!.X,
+            Lon = city.Location!.Y,
+            CountryId = city.CountryId
+        };
     }
 
     // PUT: api/Cities/5
