@@ -9,7 +9,7 @@
 <ul>
   <li><b>Spatial data:</b> I am using a Geography field in the MSSQL database to represent the city's location. 
     For mapping through the model, I use the Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite library. 
-    The NetTopologySuite library replaces the DbGeography library used in .NET Core.</li>
+    The NetTopologySuite library replaces the DbGeography library used in .NET Framework.</li>
   <li><b>IQueryable Extensions:</b> In the book project, De Sanctis uses the System.Link.Dynamic.Core library with IQueryable extensions in the generic ApiResult<T> class to sort and filter the data. 
     I implemented my own extensions, creating overloads of the OrderBy and Where methods, so it was not necessary to import the Dynamic.Core library.</li>
 </ul>
@@ -23,3 +23,9 @@
 </ul>
 <p>Apart this, have a lot of others small things that I did in the project that sometimes they works like expected, sometimes no. 
    But like I said, this is a study project, to test .NET and Angular news and features.</p>
+<h2>Blazor Client</h2>
+<p>To make a comparison with Angular, a Blazor project was included in the solution. It's not just about compare, but also about trying and test things.</p>
+<h3>Highlights</h3>
+<ul>
+  <li>Blazor.Bootstrap</li>
+</ul>
