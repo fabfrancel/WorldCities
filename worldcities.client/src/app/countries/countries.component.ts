@@ -18,7 +18,6 @@ export class CountriesComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   public countries!: MatTableDataSource<Country>;
-  public testCountries!: Country[];
 
   displayedColumns = ['id', 'name', 'iso2', 'iso3'];
 

@@ -1,0 +1,115 @@
+﻿@page "/countries"
+
+@inject ApiService apiService
+@rendermode InteractiveServer
+
+<PageTitle>Countries</PageTitle>
+
+
+<Grid @ref="grid"
+TItem="Country"
+Class="table table-hover table-bordered table-striped"
+DataProvider="CountriesDataProvider"
+AllowFiltering="true"
+AllowSorting="true"
+Responsive="true">
+    <GridColumns>
+        <GridColumn TItem="Country" HeaderText="Id" PropertyName="Id" SortKeySelector="@(item => item.Id)" SortString="id" Filterable="false" IsDefaultSortColumn="true">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="Country" HeaderText="Name" PropertyName="Name" SortKeySelector="@(item => item.Name)" SortString="name">
+            @context.Name
+        </GridColumn>
+        <GridColumn TItem="Country" HeaderText="ISO2" PropertyName="Iso2" SortKeySelector="@(item => item.Iso2)" SortString="iso2">
+            @context.Iso2
+        </GridColumn>
+        <GridColumn TItem="Country" HeaderText="ISO3" PropertyName="Iso3" SortKeySelector="@(item => item.Iso3)" SortString="Iso3">
+            @context.Iso3
+        </GridColumn>
+    </GridColumns>
+
+</Grid>
+<Pagination PageChanged="OnPageChangedAsync" ActivePageNumber="@activePage" TotalPages="@totalPages"
+DisplayPages="5" FirstLinkIcon="IconName.ChevronDoubleLeft" PreviousLinkIcon="IconName.ChevronLeft"
+NextLinkIcon="IconName.ChevronRight" LastLinkIcon="IconName.ChevronDoubleRight" Alignment="Alignment.End" />
+
+@code {
+    private IEnumerable<Country> countries = default!;
+
+    [Parameter]
+    public Grid<Country>? grid { get; set; }
+
+    private int totalPages;
+    private int activePage = 1;
+    private int pageSize = 10;
+
+    private string sortColumn = "";
+    private string? sortOrder = null;
+
+
+    private string filterColumn = "";
+    private string filterQuery = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task<GridDataProviderResult<Country>> CountriesDataProvider(GridDataProviderRequest<Country> request)
+    {
+
+        if (request.Sorting is not null && request.Sorting.Any())
+        {
+            sortColumn = request.Sorting.FirstOrDefault()!.SortString;
+            SortDirection sortDirection = request.Sorting.FirstOrDefault()!.SortDirection;
+            switch (sortDirection)
+            {
+                case SortDirection.Ascending:
+                    sortOrder = "asc";
+                    break;
+                case SortDirection.Descending:
+                    sortOrder = "desc";
+                    break;
+                default:
+                    sortOrder = null;
+                    break;
+            }
+        }
+
+        if (request.Filters is not null && request.Filters.Any())
+        {
+            filterColumn = request.Filters.FirstOrDefault()!.PropertyName;
+            filterQuery = request.Filters.FirstOrDefault()!.Value.ToString();
+        }
+
+        await LoadData();
+        return await Task.FromResult(request.ApplyTo(countries));
+    }
+
+    public async Task OnPageChangedAsync(int newPageNumber)
+    {
+        activePage = newPageNumber;
+        await grid!.RefreshDataAsync();
+    }
+
+
+    private async Task LoadData()
+    {
+        var response = await apiService.GetAsync<Country>("countries", activePage - 1, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
+        if (response is not null)
+        {
+            countries = response.Data.AsEnumerable();
+            totalPages = response.TotalPages;
+            activePage = response.PageIndex + 1;
+        }
+    }
+
+    public sealed record Country(
+        int Id,
+        string? Name,
+        string? Iso2,
+        string? Iso3
+    );
+
+}
+

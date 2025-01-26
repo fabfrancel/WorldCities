@@ -1,0 +1,10 @@
+﻿
+/*Display row cells populated with data.*/
+::deep tr:has(> td:not(:empty)) > td {
+    display: table-cell;
+}
+
+/*Don't display empty row cells, which avoids empty row cell borders from rendering per Bootstrap styling.*/
+::deep td:empty {
+    display: none;
+}
